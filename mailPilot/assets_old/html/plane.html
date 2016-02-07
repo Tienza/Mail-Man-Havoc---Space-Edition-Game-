@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>plane.html - demo basic mouse-handling</title>
+    <script type="text/javascript" src = "../simpleGame.js"></script>
+    <script type="text/javascript">
+        var game;
+        var plane;
+        var joy;
+        
+        function init(){
+            //set up game
+            game = new Scene();
+            game.setSizePos(500, 650, 10, 100);
+            
+            //set up plane
+            plane = new Sprite(game, "plane.gif", 50, 50);
+            plane.setSpeed(0);
+            
+            game.start();
+        } // end init
+        
+        function update(){
+            game.clear();
+            x = document.mouseX - game.left;
+            plane.setPosition(x, 400);
+            plane.update();
+        } // end update
+        
+        
+        
+    </script>
+</head>
+<body onload = "init()">
+    
+</body>
+</html>

@@ -1,0 +1,480 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head id="header">
+    <meta charset="UTF-8">
+    <title>mailPilot</title>
+    <script type="text/javascript"
+            src = "simpleGame.js"></script>
+    <script type="text/javascript">
+    
+    //game sprites
+    var scene;
+    var plane;
+    var island;
+    var clouds;
+    var ocean;
+    
+    //sounds
+    var yayMp3;
+    var themeMp3;
+    var themeOgg;
+    var theme;
+    var laserMp3;
+    var laserOgg;
+    var explosionMp3;
+    var alarmMp3;
+    
+    //timers
+    var laserTimer; //timer for laser delay (when key is held)
+    var themeTimer; //timer for theme music
+    
+    //other variables
+    var score;
+    var lasers; //array of lasers
+    var currentLaser = 0; //current laser being fired
+    var delay = .05;  //How long between lasers if key is held down
+    
+    //constants
+    var OCEAN_SPEED = 10;
+    var NUM_CLOUDS = 7;
+    var NUM_LASERS = 20;
+    
+    buildSounds = function(){
+        yayMp3 = new Sound("assets/audio/Yay2.mp3");
+        
+        themeMp3 = new Sound("assets/audio/Mechanolith.mp3");
+        themeOgg = new Sound("assets/audio/Mechanolith.ogg");
+        theme = new Audio('assets/audio/Mechanolith.mp3');
+        
+        laserMp3 = new Sound("assets/audio/Laser.mp3");
+        laserOgg = new Sound("assets/audio/Laser.ogg");
+        
+        explosionMp3 = new Sound("assets/audio/Explosion.mp3");
+        
+        alarmMp3 = new Sound("assets/audio/Alarm.mp3");
+    }; // end buildSounds
+    
+    function Laser(owner) {
+        tLaser = new Sprite(scene, "assets/images/lasers/laser_blue.png", 59, 95);
+        
+        tLaser.owner = owner;
+        tLaser.hide();
+        tLaser.setBoundAction(DIE);
+        
+        tLaser.fire = function() {
+            this.setPosition(this.owner.x, this.owner.y);
+            this.setSpeed(50);
+            this.setMoveAngle(0);
+            this.show();
+        };
+    }
+       
+    function makeLasers(){
+        lasers = new Array(NUM_LASERS);
+        for (i = 0; i < NUM_LASERS; i++){
+            lasers[i] = new Laser();
+        } // end for
+    } // end makeLasers
+    
+    function updateLasers(){
+        for (i = 0; i < NUM_LASERS; i++){
+            lasers[i].update();
+        } // end for
+        
+    } // end updateLasers
+    
+    function Plane(){
+        tPlane = new Sprite(scene, "assets/images/Ship.png", 114, 98);
+        tPlane.setSpeed(0);
+        tPlane.setPosition(400, 500);
+        
+        tPlane.laser = new Laser(tPlane);
+        
+        tPlane.followMouse = function(){
+            this.setPosition(scene.getMouseX(), 500);
+        };
+        
+        tPlane.checkBounds = function(){
+            if(this.y > 600){
+                this.setPosition(this.x, scene.height);
+            }
+            
+            if(this.y < 0)
+                this.setPosition(this.x, 0);
+            
+            if(this.x > 800){
+                this.setPosition(scene.width, this.y);
+            }
+            
+            if(this.x < 0)
+                this.setPosition(0, this.y);
+        };
+        
+        tPlane.checkKeys = function(){
+            var SHIP_SPEED = 35; //ship position changes by 35 pixels when key is pressed
+//            var elapsedTime = laserTimer.getElapsedTime();
+            
+            if(keysDown[K_W] || keysDown[K_UP]) {
+                this.changeYby(-SHIP_SPEED);
+            }
+            
+            if(keysDown[K_S] || keysDown[K_DOWN]){
+                this.changeYby(SHIP_SPEED);
+            }
+            
+            if(keysDown[K_A] || keysDown[K_LEFT]){
+                this.changeXby(-SHIP_SPEED);
+            }
+            
+            if(keysDown[K_D] || keysDown[K_RIGHT]){
+                this.changeXby(SHIP_SPEED);
+            }
+            
+            if(keysDown[K_Q] || keysDown[K_SPACE]){
+                //check to see if delay has passed
+//                if (elapsedTime > delay){
+//                    //increment laser number
+//                    currentLaser++;
+//                    
+//                    if (currentLaser >= NUM_LASERS){
+//                        currentLaser = 0;
+//                    } // end currentBall if
+//                    
+//                    //fire the new laser
+//                    lasers[currentLaser].fire(0);
+//                    laserTimer.reset();
+//                } // end delay if
+                
+                tLaser.fire();
+                
+                //play laser sound effects
+                laserMp3.play();
+                laserOgg.play();
+            }
+            
+//            tLaser.update();
+        };
+        
+        return tPlane;
+    } // end plane constructor
+    
+        //add progress bar as makeshift health bar
+    
+    function healthUp() { 
+        var tmp = document.getElementById('progressBar').value;
+        document.getElementById("progressBar").value = tmp + 10;
+    }
+
+    function healthDn(){
+        var tmp = document.getElementById('progressBar').value;
+        document.getElementById("progressBar").value = tmp - 10;
+    }
+    
+    function healthReset() {
+        document.getElementById("progressBar").value = 100;
+    }
+    
+    function Island(){
+        tIsland = new Sprite(scene, "assets/images/planets/17.png", 100, 100);
+        
+        tIsland.reset = function(){
+            this.setDY(OCEAN_SPEED);
+            this.setDX(0);
+            newX = Math.random() * scene.width;
+            this.setPosition(newX, 50);
+        } // end reset
+        
+        tIsland.checkBounds = function(){
+            if (this.y > scene.height){
+                this.reset();
+            } // end if
+        } // end checkBounds
+        
+        tIsland.reset();
+        
+        return tIsland;
+    } // end island
+    
+    function Drone(){
+        tDrone = new Sprite(scene, "assets/images/Spaceships-Drakir/Spaceship-Drakir3.png", 76, 52);
+        
+        tDrone.reset = function(){
+            this.setDY((Math.random()* OCEAN_SPEED) + 5);
+            this.setDX((Math.random()* 10) - 5);
+        }
+    }
+    
+    function Cloud(){
+        tCloud = new Sprite(scene, "assets/images/asteroids/Asteroid-A-10-00.png", 64, 64);
+        
+        tCloud.reset = function(){
+            this.setDY((Math.random() * OCEAN_SPEED) + 5);
+            this.setDX((Math.random() * 10) - 5);
+            newX = Math.random() * scene.width;
+            this.setPosition(newX, 50);
+        } // end reset
+        
+        tCloud.checkBounds = function(){
+            if (this.y > scene.height){
+                this.reset();
+            } // end if
+        } // end checkBounds
+        
+        tCloud.reset();
+        
+        return tCloud;
+    } // end cloud
+    
+    function makeClouds(){
+        clouds = new Array(NUM_CLOUDS);
+        for (i = 0; i < NUM_CLOUDS; i++){
+            clouds[i] = new Cloud();
+        } // end for
+    } // end makeClouds
+    
+    function updateClouds(){
+        for (i = 0; i < NUM_CLOUDS; i++){
+            clouds[i].update();
+        } // end for
+    } // end updateClouds
+    
+    function Ocean(){
+        tOcean = new Sprite(scene, "assets/images/Background_orig.jpg", 800, 1440);
+        tOcean.setDX(0);
+        tOcean.setDY(OCEAN_SPEED);
+        tOcean.setPosition(400, 300);
+        
+        tOcean.checkBounds = function(){
+           //seamless ocean gif repeats
+        
+            if (this.y > 720){
+                this.setPosition(400, -120);
+            } // end if
+        }; // end checkBounds
+        
+        tOcean.checkKeys = function(){
+            //used for testing ocean position
+            if (keysDown[K_UP]){
+                this.changeYby(-1);
+            }
+            if (keysDown[K_DOWN]){
+                this.changeYby(1);
+            }
+            console.log("Ocean Y value: " + this.y);
+        }; // end checkKeys
+        
+        return tOcean;
+    } // end ocean
+    
+    function checkCollisions(){
+        //plane on island
+        if (plane.collidesWith(island)){
+            addScore(5);
+            healthReset();
+            yayMp3 = new Sound("assets/audio/Yay2.mp3");
+            yayMp3.play();
+            island.reset();
+        } // end if
+        
+        //plane on cloud
+        for (i = 0; i < NUM_CLOUDS; i++){
+            if (plane.collidesWith(clouds[i])){
+                healthDn();
+                alarmMp3.play();
+                explosionMp3.play();
+                clouds[i].reset();
+            } // end if
+            
+            if(tLaser.collidesWith(clouds[i])) {
+                clouds[i].reset();
+                addScore(1);
+                
+                explosionMp3 = new Sound("assets/audio/Explosion.mp3");
+                explosionMp3.play();
+            }
+        } // end for
+    } // end checkCollisions
+    
+    function init(){
+        scene = new Scene();
+        scene.hideCursor();
+        
+        //add virtual joystick if possible
+        if (scene.touchable){
+            joy = new Joy();
+        } // end if
+        
+        buildSounds();
+        
+//        makeLasers();
+//        laserTimer = new Timer();
+        
+        plane = new Plane();
+        island = new Island();
+        makeClouds();
+        ocean = new Ocean();
+        
+        themeMp3.play();
+        themeTimer = new Timer();
+        themeTimer.reset();
+        
+        score = 0;
+        
+        scene.start();        
+    }  // end init
+    
+    function addScore(num){
+        score += num;
+        document.getElementById("score").innerHTML = score;
+        document.getElementById("spnDeath").innerHTML = score;
+    }
+    
+    function update(){
+        var health = parseInt(document.getElementById("progressBar").value);
+        
+        island.changeImgAngleBy(1.5);
+        
+        //replay theme song if it has ended
+        if(parseInt(themeTimer.getElapsedTime()) === 50) {
+            themeMp3 = new Sound("assets/audio/Mechanolith.mp3");
+            themeTimer.reset();
+            themeMp3.play();
+        }
+        
+//        updateLasers();
+        
+        scene.clear();
+        
+//        plane.followMouse();
+        
+            
+        ocean.update();
+        
+        if(health > 0) {
+            plane.checkKeys();
+            plane.update();
+            updateClouds();
+            island.update();
+            checkCollisions();
+        }
+        
+        if(health <= 0) {
+            explosionMp3.play();
+            explosionMp3 = new Sound("assets/audio/Silence.mp3");
+            themeMp3 = new Sound("assets/audio/Silence.mp3");
+            
+            document.getElementById("divDeath").style.display = "block";
+            document.getElementById("scoreDiv").style.display = "none";
+            document.getElementById("health").style.display = "none";
+                        
+            scene.showCursor();
+        }
+        
+        
+    } // end update();
+    
+    function resetGame() {
+        healthReset();
+        
+        document.getElementById("divDeath").style.display = "none";
+        document.getElementById("scoreDiv").style.display = "block";
+        document.getElementById("health").style.display = "block";
+        
+        plane.setPosition(400, 500);
+        scene.hideCursor();
+        score = 0;
+        document.getElementById("score").innerHTML = 0;
+    }
+    
+    function quit() {
+        window.close();
+    }
+    
+    </script>
+    
+    <style type="text/css">
+        head{
+            padding: 0;
+            margin: 0;
+        }
+        body{
+            padding: 0;
+            margin: 0;
+        }
+        #health{
+            position: absolute;
+            font-family: monospace;
+            left: 50px;
+            top: 120px;
+            z-index: 999;
+        }
+        #scoreDiv{
+            position: absolute;
+            font-family: sans-serif;
+            font-size: 25px;
+            right: 650px;
+            top: 120px;
+            z-index: 999;
+            color: red;
+        }
+        #divDeath {
+            position: absolute;
+            font-family: sans-serif;
+            font-size: 50px;
+            right: 675px;
+            top: 300px;
+            z-index: 999;
+            color: red;
+            display: none;
+        }
+        #gameDetails {
+            position: absolute;
+            left:1px;
+            top:1px;
+            font-family: sans-serif;
+            z-index: 1002;
+        }
+        a:link {
+            color: red;
+        }
+        #incr{
+            display: none;
+        }
+        #decr{
+            display: none;
+        }
+        #progressBar{
+            background-color: transparent;
+            border-width: 1px;
+            height: 25px;
+            width: 200px;
+        }
+        #progressBar::-moz-progress-bar{
+            background: red;
+            text-decoration: none;
+        }
+        #title{
+            position: relative;
+            font-family: monospace;
+            left: 50px;
+            top: 1px;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body onload = "init()">
+    <span id="health"><progress value="100" max="100" id=progressBar>50%</progress></span>
+    <div id="scoreDiv"><label id="scoreLabel">SCORE: </label><span id="score">0</span></div>
+    <input type=button id="incr" value='Increse' onClick='healthUp();'>
+    <input type=button id="decr" value='Decrease' onclick='healthDn();'>
+    
+    <div id="divDeath">
+        <label id="deathLabel">YOU HAVE DIED! SCORE: </label><span id="spnDeath">0</span>
+        <br/>
+        <label id="playAgain">PLAY AGAIN?</label>
+        <br/>
+        <a onclick="resetGame()" href="javascript:void(0)">YES</a> &nbsp; <a onclick="quit()" href="javascript:void(0)">NO</a>
+    </div>
+    <br>
+</body>
+</html>

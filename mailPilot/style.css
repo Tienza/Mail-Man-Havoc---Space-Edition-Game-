@@ -1,0 +1,162 @@
+/* 
+ * Project: Mail Man Havoc - Space Edition
+ * File:    style.css
+ * Purpose: Styling of HTML for game's menus and interface
+ * Authors: Krisztián Köves, Tien Liengtiraphan (Team KiloTango)
+ * Date:    4/30/15
+ */
+
+#splash {
+    position: absolute;
+    z-index: 5000;
+    left: 18px;
+    top: 36px;
+}
+
+#play {
+    position: absolute;
+    left: 380px;
+    top: 460px;
+}
+
+#help {
+    position: absolute;
+    left: 380px;
+    top: 510px;
+}
+
+#splash2{
+    position: absolute;
+    z-index: 5000;
+    left: 18px;
+    top: 36px;
+    display: none;
+}
+
+#sideNote{
+    position: absolute;
+    top: 30px;
+    left: 10px;
+    display: none;
+}
+
+#play2 {
+    position: absolute;
+    left: 380px;
+    top: 460px;
+}
+
+#help2 {
+    position: absolute;
+    left: 380px;
+    top: 505px;
+}
+
+#hardcoreButton{
+    position: absolute;
+    left: 367px;
+    top: 550px;
+}
+
+#health{
+    position: absolute;
+    font-family: monospace;
+    left: 50px;
+    top: 45px;
+    z-index: 999;
+}
+
+#scoreDiv{
+    position: absolute;
+    font-family: sans-serif;
+    font-size: 25px;
+    left: 650px;
+    top: 45px;
+    z-index: 999;
+    color: red;
+}
+
+#divDeath {
+    position: absolute;
+    font-family: sans-serif;
+    font-size: 50px;
+    left: 90px;
+    top: 240px;
+    z-index: 999;
+    color: red;
+    display: none;
+}
+
+#playAgain{
+    position: absolute;
+    left: 170px;
+}
+
+#gameDetails {
+    position: absolute;
+    font-family: sans-serif;
+    right: 100px;
+    top: 50px;
+    z-index: 1002;
+}
+
+#instructions{
+    position: absolute;
+    z-index: 6000;
+    left: 275px;
+    top: 200px;
+    display: none;
+}
+
+#objectives{
+    position: absolute;
+    z-index: 6000;
+    left: 180px;
+    top: 267px;
+    display: none;
+}
+
+#toInstructions{
+    position: absolute;
+    z-index: 6001;
+    top: 395px;
+    left: 505px;
+    display: none;
+}
+
+#toObjectives{
+    position: absolute;
+    z-index: 6001;
+    top: 460px;
+    left: 432px;
+    display: none;
+
+}
+
+#closeInstruct{
+    position: absolute;
+    left: 573px;
+    top: 182px;
+    z-index: 6001;
+    display: none;
+}
+
+a:link {
+    color: red;
+
+}
+
+#yesNo{
+    position: absolute;
+    left: 220px;
+}
+#p1{
+    background-color: transparent;
+    border-width: 1px;
+    height: 25px;
+    width: 200px;
+}
+#p1::-moz-progress-bar{
+    background: red;
+    text-decoration: none;
+}

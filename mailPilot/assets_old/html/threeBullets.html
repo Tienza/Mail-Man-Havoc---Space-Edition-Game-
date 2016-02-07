@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>multiBullets</title>
+    <script type="text/javascript"
+            src = "simpleGame.js"></script>
+    <script type="text/javascript">
+    
+    var scene;
+    var bullets;
+    var NUM_BULLETS = 100;
+    var currentBullet = 0;
+    var delay = .1;  //How long between bullets if key is held down
+    var spread = 6;  //How far bullets will spray in degrees. 0 means no spread
+                     //6 means bullets will 'wander' +/- 3 degrees.
+                     //wide spread for less accuracy.
+    var timer;
+    
+    function Bullet(){
+        tBullet = new Sprite(scene, "redBall.png", 10, 10);
+        
+        tBullet.setBoundAction(DIE);
+        tBullet.hide();
+        
+        tBullet.fire = function(modifier){
+            this.show();
+            //modifier = (Math.random() * spread) - (spread / 2);
+            this.setMoveAngle(90 + modifier);
+            this.setSpeed(20);
+            this.setPosition(10, 240);            
+        } // end fire
+                   
+        return tBullet;
+    } // end bullet def
+    
+    function makeBullets(){
+        bullets = new Array(NUM_BULLETS);
+        for (i = 0; i < NUM_BULLETS; i++){
+            bullets[i] = new Bullet();
+        } // end for
+    } // end makeBullets
+    
+    function updateBullets(){
+        for (i = 0; i < NUM_BULLETS; i++){
+            bullets[i].update();
+        } // end for
+        
+    } // end updateBullets
+    
+    function checkKeys(){
+        elapsedTime = timer.getElapsedTime();
+        if (keysDown[K_SPACE]){
+            //check to see if delay has passed
+            if (elapsedTime > delay){
+                //increment bullet number
+                currentBullet++;
+                if (currentBullet >= NUM_BULLETS){
+                    currentBullet = 0;
+                } // end currentBall if
+                //fire the new bullet
+                bullets[currentBullet].fire(-3);
+                currentBullet++;
+                bullets[currentBullet].fire(0);
+                currentBullet++;
+                bullets[currentBullet].fire(+3);
+                
+                timer.reset();    
+            } // end delay if
+        } // end  key down if
+    } // end checkKeys
+    
+    function init(){
+        scene = new Scene();
+        timer = new Timer();
+        makeBullets();        
+        scene.start();
+    }
+    
+    function update(){
+        scene.clear();
+        
+        checkKeys();
+        updateBullets();
+    }
+    
+    </script>
+</head>
+<body onload = "init()">
+    
+</body>
+</html>

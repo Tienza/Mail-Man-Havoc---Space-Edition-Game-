@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>mail pilot</title>
+    <script type="text/javascript"
+            src = "../simpleGame.js"></script>
+    <script type="text/javascript">
+        var game;
+        var plane;
+        var island;
+        var clouds;
+        var ocean;
+        var yay;
+        var thunder;
+        var engine;
+        
+        //constants
+        var NUMCLOUDS = 3;
+
+        function init(){
+            //create scene
+            game = new Scene();
+            game.setSizePos(500, 650, 100, 0);
+            
+            //create sprites
+            setUpPlane();
+            setUpIsland();
+            setUpClouds();    
+            setUpOcean();
+            
+            //create sound effects
+            yay = new Sound("yay.ogg");
+            thunder = new Sound("thunder.ogg");
+            engine = new Sound("engine.ogg");
+            
+            game.start();
+            
+        } // end init
+        
+        function setUpPlane(){
+            //plane
+            plane = new Sprite(game, "plane.png", 50, 50);
+            plane.setSpeed(0);
+            plane.setPosition(100, 400);
+        } // end setUpPlane
+
+        function setUpIsland(){
+            //island
+            island = new Sprite(game, "island.gif", 50, 50);
+            island.setSpeed(5);
+            island.setMoveAngle(90);
+            island.setPosition(100, 10);
+            
+            //override checkbounds method for new behavior
+            island.checkBounds = function(){
+                if (this.y > game.height){
+                    this.y = 0;
+                    this.x = Math.random() * game.width;
+                } // end if
+            } // end checkbounds
+        } // end setUpIsland
+        
+        function setUpClouds(){
+            clouds = new Array(NUMCLOUDS);
+            for (i = 0; i < NUMCLOUDS; i++){
+                //cloud
+                var cloud = new Sprite(game, "Cloud.gif", 150, 150);
+                cloud.setSpeed(5);
+                cloud.setMoveAngle(90);
+                cloud.setPosition(200, 200);
+                
+                //create new method for reset
+                cloud.reset = function(){
+                    this.y = 0;
+                    this.x = Math.random() * game.width;
+                    //generate a random amount of drift
+                    var drift = (Math.random() * 90) - 45;
+                    this.setMoveAngle(90 + drift);
+                } // end reset
+                
+                //override checkBounds method
+                cloud.checkBounds = function(){
+                    
+                    //reset at bottom
+                    if (this.y > game.height){
+                        this.reset();
+                    } // end if
+                    
+                    //wrap around sides
+                    if (this.x > game.width){
+                        this.x = 0;
+                    } // end if
+                    
+                    if (this.x < 0){
+                        this.x = game.width;
+                    }
+                } // end function
+                cloud.reset();
+                clouds[i] = cloud;
+            } // end for loop
+        } // end setUpCloud
+        
+        function setUpOcean(){
+            ocean = new Sprite(game, "ocean.gif", 900, 1500);
+            ocean.setSpeed(5);
+            ocean.setMoveAngle(90);
+        } // end setUpOcean
+        
+        function update(){
+            engine.play();
+            //position plane according to mouse
+            x = document.mouseX - game.left;
+            plane.setPosition(x, 400);
+            
+            //check collisions
+            if (plane.collidesWith(island)){
+                yay.play();
+            } // end if
+            
+            //clouds
+            for (i = 0; i < NUMCLOUDS; i++){
+                cloud = clouds[i]
+                if (plane.collidesWith(cloud)){
+                    thunder.play();
+                } // end if
+            } // end for
+            
+            //clear and update
+            game.clear();
+            ocean.update();
+            island.update();
+            plane.update();
+            for (i = 0; i < NUMCLOUDS; i++){
+                clouds[i].update();
+            } // end for loop
+        } // end update
+    </script>
+</head>
+<body onload = "init()">
+    
+</body>
+</html>

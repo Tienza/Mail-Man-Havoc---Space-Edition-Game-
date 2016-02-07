@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+    <head>
+        <meta charset="UTF-8">
+        <title>Mail Man Havoc - Space Edition</title>
+        <script type="text/javascript" src="simpleGame.js"></script>
+        <script type="text/javascript" src="mailPilot.js"></script>
+        
+        <link rel="icon" href="assets/images/favicon.png" type="image/png" sizes="16x16 32x32">
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body>
+        <div id="splash">
+            <img src="assets/images/splash/splash2Small.jpg" alt="Splash Screen">
+            
+            <a id="play" onclick="init()" href="javascript:void(0)">
+                <img src="assets/images/splash/playRound.png" height="36" width="87">
+            </a>
+            
+            <br/><br/>
+            
+            <a id="help" onclick="showHelp()" href="javascript:void(0)">
+                <img src="assets/images/splash/helpRound.png" height="36" width="87">
+            </a>
+        </div>
+
+        <div id="splash2">
+            <img src="assets/images/splash/splash2Small.jpg" alt="Splash Screen">
+            
+            <img id="sideNote" src="assets/images/instructions/sideNoteGrey2.png" alt="Side Note" height="50" width="375">
+            
+            <a id="play2" onclick="resetGame()" href="javascript:void(0)">
+                <img src="assets/images/splash/playRound.png" height="36" width="87" name="MyImage">
+            </a>
+            
+            <br/><br/>
+            
+            <a id="help2" onclick="showHelp()" href="javascript:void(0)">
+                <img src="assets/images/splash/helpRound.png" height="36" width="87">
+            </a>
+            
+            <a id="hardcoreButton" onclick="toggleHardcore()" href="javascript:void(0)">
+                <img id="hardcoreButtonImg" src="assets/images/splash/hardcoreOn.png" height="36" width="110">
+            </a>
+        </div>
+
+        <div id="instructions">
+            <img src="assets/images/instructions/instructionScreen.png" alt="Keys">
+        </div>
+
+        <div id="toObjectives">
+            <a id="viewObjective" onclick="toObjective()" href="javascript:void(0)">
+                <img src="assets/images/instructions/viewObjectives.png" alt="View Objectives" height="22" width="159">
+            </a>
+        </div>
+
+        <div id="toInstructions">
+            <a id="viewInstruction" onclick="toInstruction()" href="javascript:void(0)">
+                <img src="assets/images/instructions/viewInstructions.png" alt="View Instructions" height="22" width="174">
+            </a>
+        </div>
+
+        <div id="objectives">
+            <img src="assets/images/instructions/objectivesGrey.png" alt="Objectives" height="150" width="500">
+        </div>
+
+        <div id="closeInstruct">
+            <a onclick="closeHelp()" href="javascript:void(0)">
+                <img src="assets/images/exit/exit2.png" height="35" width="35">
+            </a>
+        </div>
+
+        <span id="health"><progress value="100" max="100" id=p1>50%</progress></span>
+        
+        <div id="scoreDiv"><label id="scoreLabel">SCORE: </label><span id="score">0</span></div>
+
+        <div id="divDeath">
+            <label id="deathLabel">YOU HAVE DIED! SCORE: </label><span id="spnDeath">0</span>
+            
+            <br/><br/>
+            
+            <label id="playAgain">PLAY AGAIN?</label>
+            
+            <br/>
+            
+            <span id="yesNo"><a onclick="resetGame()" href="javascript:void(0)">YES</a> &nbsp; <a onclick="quit()" href="javascript:void(0)">NO</a></span>
+        </div>
+
+        <br>
+    </body>
+</html>
